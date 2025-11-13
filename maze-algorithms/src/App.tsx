@@ -3,6 +3,7 @@ import { AlgorithmSection } from "./components/AlgorithmSection";
 import { algorithmsData } from "./data/algorithms";
 import { generateBinaryTree } from "./algorithms/binaryTree";
 import { generateRecursiveBacktracker } from "./algorithms/recursiveBacktracker";
+import { generatePrim } from "./algorithms/prim";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -65,6 +66,39 @@ const recursiveBacktrackerCode = `function generateRecursiveBacktracker(rows: nu
   return grid;
 }`;
 
+// Código exemplo Prim
+const primCode = `function generatePrim(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const frontier: Cell[] = [];
+
+  // Começar com célula aleatória
+  const startCell = grid[randomRow][randomCol];
+  startCell.visited = true;
+
+  // Adicionar vizinhos à fronteira
+  addToFrontier(grid, startCell, frontier);
+
+  while (frontier.length > 0) {
+    // Escolher célula aleatória da fronteira
+    const current = frontier.splice(randomIndex, 1)[0];
+
+    // Obter vizinhos visitados
+    const visitedNeighbors = getNeighbors(grid, current)
+      .filter(n => n.visited);
+
+    if (visitedNeighbors.length > 0) {
+      // Conectar a um vizinho visitado aleatório
+      const chosen = randomChoice(visitedNeighbors);
+      removeWall(current, chosen);
+      
+      current.visited = true;
+      addToFrontier(grid, current, frontier);
+    }
+  }
+
+  return grid;
+}`;
+
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -92,6 +126,13 @@ function App() {
           info={algorithmsData[1]}
           generateFn={generateRecursiveBacktracker}
           code={recursiveBacktrackerCode}
+        />
+
+        {/* Prim's Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[2]}
+          generateFn={generatePrim}
+          code={primCode}
         />
       </div>
     </div>
