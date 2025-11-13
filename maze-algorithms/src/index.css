@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* todo: ajustar css- */
+@theme inline {
+  --color-maze-wall: #f1f5f9;
+  --color-maze-path: #f12f19;
+  --color-maze-current: #3b82f6;
+  --color-maze-visited: #8b5cf6;
+}
+
+#root {
+  width: 100%;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
