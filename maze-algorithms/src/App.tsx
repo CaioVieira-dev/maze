@@ -6,6 +6,7 @@ import { generateRecursiveBacktracker } from "./algorithms/recursiveBacktracker"
 import { generatePrim } from "./algorithms/prim";
 import { generateKruskal } from "./algorithms/kruskal";
 import { generateEller } from "./algorithms/eller";
+import { generateWilson } from "./algorithms/wilson";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -136,6 +137,7 @@ const kruskalCode = `function generateKruskal(rows: number, cols: number): MazeG
   return grid;
 }`;
 
+// Código exemplo Eller
 const ellerCode = `function generateEller(rows: number, cols: number): MazeGrid {
   const grid = createEmptyGrid(rows, cols);
   let rowSets: number[] = [];
@@ -164,6 +166,49 @@ const ellerCode = `function generateEller(rows: number, cols: number): MazeGrid 
     if (!isLastRow) {
       // Cada conjunto deve ter pelo menos 1 vertical
       createVerticalConnections(grid, row, rowSets);
+    }
+  }
+
+  return grid;
+}`;
+
+// Código exemplo Wilson
+const wilsonCode = `function generateWilson(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const unvisited: Cell[] = getAllCells(grid);
+
+  // Escolher célula inicial
+  const start = randomChoice(unvisited);
+  start.visited = true;
+  removeFromList(unvisited, start);
+
+  while (unvisited.length > 0) {
+    // Começar random walk de célula não visitada
+    let current = randomChoice(unvisited);
+    const path: Cell[] = [current];
+    const pathMap = new Map<string, number>();
+
+    // Random walk até encontrar célula visitada
+    while (!current.visited) {
+      const next = randomChoice(getNeighbors(current));
+
+      // Se encontrou loop, apagar o loop
+      if (pathMap.has(nextKey)) {
+        const loopStart = pathMap.get(nextKey);
+        path.length = loopStart + 1; // Apagar loop
+        current = next;
+      } else {
+        path.push(next);
+        pathMap.set(nextKey, path.length - 1);
+        current = next;
+      }
+    }
+
+    // Adicionar caminho ao labirinto
+    for (let i = 0; i < path.length - 1; i++) {
+      path[i].visited = true;
+      removeWall(path[i], path[i + 1]);
+      removeFromList(unvisited, path[i]);
     }
   }
 
@@ -218,6 +263,13 @@ function App() {
           info={algorithmsData[4]}
           generateFn={generateEller}
           code={ellerCode}
+        />
+
+        {/* Wilson's Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[5]}
+          generateFn={generateWilson}
+          code={wilsonCode}
         />
       </div>
     </div>

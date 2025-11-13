@@ -86,4 +86,21 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Viés horizontal visível",
     ],
   },
+  {
+    id: "wilson",
+    name: "Algoritmo de Wilson",
+    description:
+      "Usa caminhadas aleatórias com apagamento de loops (loop-erased random walks). Gera labirintos completamente sem viés - amostra uniforme de todas as árvores geradoras possíveis.",
+    complexity: {
+      time: "O(n)",
+      space: "O(n)",
+    },
+    characteristics: [
+      "Completamente sem viés - distribuição uniforme",
+      "Lento no início, acelera dramaticamente",
+      "Apaga loops durante o random walk",
+      "Mais lento que Aldous-Broder",
+      "Produz labirintos imparciais",
+    ],
+  },
 ];
