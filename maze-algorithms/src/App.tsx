@@ -10,6 +10,8 @@ import { generateWilson } from "./algorithms/wilson";
 import { generateAldousBroder } from "./algorithms/aldousBroder";
 import { generateGrowingTree } from "./algorithms/growingTree";
 import { generateHuntAndKill } from "./algorithms/huntAndKill";
+import { generateRecursiveDivision } from "./algorithms/recursiveDivision";
+import { generateSidewinder } from "./algorithms/sidewinder";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -319,6 +321,89 @@ function hunt(grid: MazeGrid): Cell | null {
   return null; // Terminado
 }`;
 
+// Código exemplo Recursive Division
+const recursiveDivisionCode = `function generateRecursiveDivision(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  // Começar com campo aberto (sem paredes internas)
+  removeAllInnerWalls(grid);
+  addOuterWalls(grid);
+
+  // Dividir recursivamente
+  divide(grid, 0, 0, cols, rows, chooseOrientation(cols, rows));
+
+  return grid;
+}
+
+function divide(grid, x, y, width, height, orientation) {
+  if (width < 2 || height < 2) return;
+
+  const horizontal = orientation === 'horizontal';
+
+  // Escolher onde dividir
+  const wx = x + (horizontal ? 0 : random(width - 1));
+  const wy = y + (horizontal ? random(height - 1) : 0);
+
+  // Escolher onde colocar a passagem
+  const px = wx + (horizontal ? random(width) : 0);
+  const py = wy + (horizontal ? 0 : random(height));
+
+  // Adicionar parede com passagem
+  addWallWithGap(grid, wx, wy, px, py, horizontal);
+
+  // Dividir subcâmaras recursivamente
+  if (horizontal) {
+    divide(grid, x, y, width, wy - y + 1, ...);
+    divide(grid, x, wy + 1, width, y + height - wy - 1, ...);
+  } else {
+    divide(grid, x, y, wx - x + 1, height, ...);
+    divide(grid, wx + 1, y, x + width - wx - 1, height, ...);
+  }
+}`;
+
+// Código exemplo Sidewinder
+const sidewinderCode = `function generateSidewinder(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  for (let row = 0; row < rows; row++) {
+    let runStart = 0;
+
+    for (let col = 0; col < cols; col++) {
+      const current = grid[row][col];
+
+      // PRIMEIRA LINHA: sempre vai para o leste
+      if (row === 0) {
+        if (col < cols - 1) {
+          removeWall(current, east);
+        }
+        continue;
+      }
+
+      // OUTRAS LINHAS: lógica normal
+      const isLastCol = col === cols - 1;
+
+      if (isLastCol) {
+        // Fechar run - ir ao norte
+        const randomCol = runStart + random(col - runStart + 1);
+        removeWall(grid[row][randomCol], north);
+      } else {
+        const shouldCloseRun = Math.random() < 0.5;
+
+        if (shouldCloseRun) {
+          // Fechar run - escolher célula para norte
+          const randomCol = runStart + random(col - runStart + 1);
+          removeWall(grid[row][randomCol], north);
+          runStart = col + 1; // Novo run
+        } else {
+          // Continuar run para leste
+          removeWall(current, east);
+        }
+      }
+    }
+  }
+
+  return grid;
+}`;
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -395,6 +480,20 @@ function App() {
           info={algorithmsData[8]}
           generateFn={generateHuntAndKill}
           code={huntAndKillCode}
+        />
+
+        {/* Recursive Division Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[9]}
+          generateFn={generateRecursiveDivision}
+          code={recursiveDivisionCode}
+        />
+
+        {/* Sidewinder Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[10]}
+          generateFn={generateSidewinder}
+          code={sidewinderCode}
         />
       </div>
     </div>

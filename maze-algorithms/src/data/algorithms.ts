@@ -154,4 +154,38 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Similar ao Recursive Backtracker visualmente",
     ],
   },
+  {
+    id: "recursive-division",
+    name: "Recursive Division",
+    description:
+      'Único algoritmo "wall adder" - começa com campo vazio e adiciona paredes recursivamente. Cria padrões fractais com longos corredores retos cruzando o espaço.',
+    complexity: {
+      time: "O(n log n)",
+      space: "O(log n)",
+    },
+    characteristics: [
+      'Funciona "ao contrário" - adiciona paredes',
+      "Padrão fractal distinto",
+      "Longos corredores retos",
+      "Muito previsível",
+      "Fácil de resolver visualmente",
+    ],
+  },
+  {
+    id: "sidewinder",
+    name: "Sidewinder",
+    description:
+      'Evolução do Binary Tree - cria "runs" horizontais e escolhe pontos aleatórios para conectar ao norte. Remove o corredor da borda direita mas mantém o do topo.',
+    complexity: {
+      time: "O(n)",
+      space: "O(1)",
+    },
+    characteristics: [
+      "Melhoria sobre Binary Tree",
+      "Remove corredor da borda direita",
+      "Mantém corredor no topo",
+      "Trivial resolver de baixo para cima",
+      "Muito eficiente - O(1) espaço",
+    ],
+  },
 ];
