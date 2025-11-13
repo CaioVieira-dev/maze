@@ -5,6 +5,7 @@ import { generateBinaryTree } from "./algorithms/binaryTree";
 import { generateRecursiveBacktracker } from "./algorithms/recursiveBacktracker";
 import { generatePrim } from "./algorithms/prim";
 import { generateKruskal } from "./algorithms/kruskal";
+import { generateEller } from "./algorithms/eller";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -135,6 +136,40 @@ const kruskalCode = `function generateKruskal(rows: number, cols: number): MazeG
   return grid;
 }`;
 
+const ellerCode = `function generateEller(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  let rowSets: number[] = [];
+  let nextSetId = 1;
+
+  for (let row = 0; row < rows; row++) {
+    const isLastRow = row === rows - 1;
+
+    // Atribuir conjuntos a células sem conjunto
+    for (let col = 0; col < cols; col++) {
+      if (!rowSets[col]) rowSets[col] = nextSetId++;
+    }
+
+    // Conectar células horizontalmente
+    for (let col = 0; col < cols - 1; col++) {
+      if (rowSets[col] !== rowSets[col + 1]) {
+        if (isLastRow || Math.random() > 0.5) {
+          removeWall(current, right);
+          // Unir conjuntos
+          mergeSet(rowSets, col, col + 1);
+        }
+      }
+    }
+
+    // Criar conexões verticais
+    if (!isLastRow) {
+      // Cada conjunto deve ter pelo menos 1 vertical
+      createVerticalConnections(grid, row, rowSets);
+    }
+  }
+
+  return grid;
+}`;
+
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -176,6 +211,13 @@ function App() {
           info={algorithmsData[3]}
           generateFn={generateKruskal}
           code={kruskalCode}
+        />
+
+        {/* Eller's Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[4]}
+          generateFn={generateEller}
+          code={ellerCode}
         />
       </div>
     </div>

@@ -69,4 +69,21 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Similar ao Prim visualmente",
     ],
   },
+  {
+    id: "eller",
+    name: "Algoritmo de Eller",
+    description:
+      "Um dos mais eficientes e únicos - constrói o labirinto linha por linha usando conjuntos. Único capaz de gerar labirintos de tamanho infinito com memória constante.",
+    complexity: {
+      time: "O(n)",
+      space: "O(largura)",
+    },
+    characteristics: [
+      "Extremamente eficiente em memória",
+      "Constrói linha por linha",
+      "Pode gerar labirintos infinitos",
+      "Tempo linear",
+      "Viés horizontal visível",
+    ],
+  },
 ];
