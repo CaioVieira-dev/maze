@@ -8,6 +8,8 @@ import { generateKruskal } from "./algorithms/kruskal";
 import { generateEller } from "./algorithms/eller";
 import { generateWilson } from "./algorithms/wilson";
 import { generateAldousBroder } from "./algorithms/aldousBroder";
+import { generateGrowingTree } from "./algorithms/growingTree";
+import { generateHuntAndKill } from "./algorithms/huntAndKill";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -246,6 +248,77 @@ const aldousBroderCode = `function generateAldousBroder(rows: number, cols: numb
   return grid;
 }`;
 
+// Código exemplo Growing Tree
+const growingTreeCode = `function generateGrowingTree(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const cells: Cell[] = [];
+
+  // Célula inicial
+  const startCell = grid[randomRow][randomCol];
+  startCell.visited = true;
+  cells.push(startCell);
+
+  while (cells.length > 0) {
+    // Escolher célula usando estratégia
+    // 50% newest (DFS), 50% random (Prim)
+    const index = chooseCellIndex(cells.length);
+    const current = cells[index];
+
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      const chosen = randomChoice(unvisitedNeighbors);
+      removeWall(current, chosen);
+      chosen.visited = true;
+      cells.push(chosen);
+    } else {
+      // Sem vizinhos, remover da lista
+      cells.splice(index, 1);
+    }
+  }
+
+  return grid;
+}`;
+
+// Código exemplo Hunt-and-Kill
+const huntAndKillCode = `function generateHuntAndKill(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  let current = grid[randomRow][randomCol];
+  current.visited = true;
+
+  while (current !== null) {
+    // Fase "Kill" - Random walk
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      const chosen = randomChoice(unvisitedNeighbors);
+      removeWall(current, chosen);
+      chosen.visited = true;
+      current = chosen;
+    } else {
+      // Fase "Hunt" - Escanear grid
+      current = hunt(grid);
+    }
+  }
+
+  return grid;
+}
+
+function hunt(grid: MazeGrid): Cell | null {
+  // Escanear cada célula procurando não visitada
+  // adjacente a visitada
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (!cell.visited && hasVisitedNeighbor(cell)) {
+        connectToVisitedNeighbor(cell);
+        return cell;
+      }
+    }
+  }
+  return null; // Terminado
+}`;
+
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -308,6 +381,20 @@ function App() {
           info={algorithmsData[6]}
           generateFn={generateAldousBroder}
           code={aldousBroderCode}
+        />
+
+        {/* Growing Tree Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[7]}
+          generateFn={generateGrowingTree}
+          code={growingTreeCode}
+        />
+
+        {/* Hunt-and-Kill Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[8]}
+          generateFn={generateHuntAndKill}
+          code={huntAndKillCode}
         />
       </div>
     </div>

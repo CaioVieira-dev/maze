@@ -120,4 +120,38 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Mais lento que Wilson's",
     ],
   },
+  {
+    id: "growing-tree",
+    name: "Growing Tree",
+    description:
+      "Algoritmo extremamente flexível que pode simular outros algoritmos dependendo de como escolhe células. Esta implementação usa mix 50/50 entre newest (DFS) e random (Prim).",
+    complexity: {
+      time: "O(n)",
+      space: "O(n)",
+    },
+    characteristics: [
+      "Flexível - pode simular outros algoritmos",
+      "Comportamento controlável por estratégia",
+      "Mix de características de DFS e Prim",
+      "Balanceado entre corredores longos e ramificações",
+      "Muito versátil",
+    ],
+  },
+  {
+    id: "hunt-and-kill",
+    name: "Hunt-and-Kill",
+    description:
+      "Combina random walk (kill) com busca sistemática (hunt). Faz caminhada aleatória até encontrar dead-end, então escaneia o grid procurando células não visitadas adjacentes.",
+    complexity: {
+      time: "O(n²)",
+      space: "O(1)",
+    },
+    characteristics: [
+      "Duas fases distintas: walk e hunt",
+      "Gera longos corredores sinuosos",
+      "Menor custo de memória que DFS",
+      "Mais lento devido à fase hunt",
+      "Similar ao Recursive Backtracker visualmente",
+    ],
+  },
 ];
