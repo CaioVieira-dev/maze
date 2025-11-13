@@ -103,4 +103,21 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Produz labirintos imparciais",
     ],
   },
+  {
+    id: "aldous-broder",
+    name: "Aldous-Broder",
+    description:
+      "Um dos algoritmos mais simples - faz uma caminhada aleatória (drunkard's walk) pelo grid. Extremamente ineficiente porque revisita células já conectadas, mas gera labirintos sem viés.",
+    complexity: {
+      time: "O(n²) esperado",
+      space: "O(1)",
+    },
+    characteristics: [
+      "Algoritmo mais simples de implementar",
+      "Completamente sem viés - distribuição uniforme",
+      "Extremamente ineficiente - revisita células",
+      "Tempo esperado quadrático",
+      "Mais lento que Wilson's",
+    ],
+  },
 ];

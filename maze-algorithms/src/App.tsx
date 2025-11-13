@@ -7,6 +7,7 @@ import { generatePrim } from "./algorithms/prim";
 import { generateKruskal } from "./algorithms/kruskal";
 import { generateEller } from "./algorithms/eller";
 import { generateWilson } from "./algorithms/wilson";
+import { generateAldousBroder } from "./algorithms/aldousBroder";
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -215,6 +216,36 @@ const wilsonCode = `function generateWilson(rows: number, cols: number): MazeGri
   return grid;
 }`;
 
+// Código exemplo Aldous-Broder
+const aldousBroderCode = `function generateAldousBroder(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  
+  // Começar em célula aleatória
+  let current = grid[randomRow][randomCol];
+  current.visited = true;
+
+  let remaining = rows * cols - 1;
+
+  // Continuar até todas serem visitadas
+  while (remaining > 0) {
+    // Escolher vizinho aleatório
+    const next = randomChoice(getNeighbors(current));
+
+    // Se não foi visitado, conectar
+    if (!next.visited) {
+      removeWall(current, next);
+      next.visited = true;
+      remaining--;
+    }
+
+    // Mover para o vizinho (visitado ou não!)
+    // Essa é a ineficiência do algoritmo
+    current = next;
+  }
+
+  return grid;
+}`;
+
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -270,6 +301,13 @@ function App() {
           info={algorithmsData[5]}
           generateFn={generateWilson}
           code={wilsonCode}
+        />
+
+        {/* Aldous-Broder Algorithm */}
+        <AlgorithmSection
+          info={algorithmsData[6]}
+          generateFn={generateAldousBroder}
+          code={aldousBroderCode}
         />
       </div>
     </div>
