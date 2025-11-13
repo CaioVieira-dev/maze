@@ -52,4 +52,21 @@ export const algorithmsData: AlgorithmInfo[] = [
       "Labirintos mais ramificados",
     ],
   },
+  {
+    id: "kruskal",
+    name: "Algoritmo de Kruskal",
+    description:
+      "Versão randomizada do algoritmo de Kruskal para árvore geradora mínima. Usa estrutura Union-Find para conectar células aleatoriamente sem criar loops.",
+    complexity: {
+      time: "O(n log n)",
+      space: "O(n)",
+    },
+    characteristics: [
+      "Usa estrutura Disjoint Set (Union-Find)",
+      "Muitas ramificações curtas",
+      "Processa todas as paredes aleatoriamente",
+      "Muito eficiente com path compression",
+      "Similar ao Prim visualmente",
+    ],
+  },
 ];
