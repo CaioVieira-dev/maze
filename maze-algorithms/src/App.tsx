@@ -2,8 +2,9 @@ import { Glossary } from "./components/Glossary";
 import { AlgorithmSection } from "./components/AlgorithmSection";
 import { algorithmsData } from "./data/algorithms";
 import { generateBinaryTree } from "./algorithms/binaryTree";
+import { generateRecursiveBacktracker } from "./algorithms/recursiveBacktracker";
 
-// Código exemplo para exibição
+// Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
   const grid = createEmptyGrid(rows, cols);
 
@@ -23,6 +24,41 @@ const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number):
         const chosen = randomChoice(neighbors);
         removeWall(current, chosen);
       }
+    }
+  }
+
+  return grid;
+}`;
+
+// Código exemplo Recursive Backtracker
+const recursiveBacktrackerCode = `function generateRecursiveBacktracker(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const stack: Cell[] = [];
+
+  // Começar na célula (0, 0)
+  const startCell = grid[0][0];
+  startCell.visited = true;
+  stack.push(startCell);
+
+  while (stack.length > 0) {
+    const current = stack[stack.length - 1]; // Peek
+
+    // Obter vizinhos não visitados
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      // Escolher vizinho aleatório
+      const chosen = randomChoice(unvisitedNeighbors);
+
+      // Remover parede entre current e chosen
+      removeWall(current, chosen);
+
+      // Adicionar à pilha
+      chosen.visited = true;
+      stack.push(chosen);
+    } else {
+      // Backtrack
+      stack.pop();
     }
   }
 
@@ -49,6 +85,13 @@ function App() {
           info={algorithmsData[0]}
           generateFn={generateBinaryTree}
           code={binaryTreeCode}
+        />
+
+        {/* Recursive Backtracker */}
+        <AlgorithmSection
+          info={algorithmsData[1]}
+          generateFn={generateRecursiveBacktracker}
+          code={recursiveBacktrackerCode}
         />
       </div>
     </div>

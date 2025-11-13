@@ -22,7 +22,7 @@ export const algorithmsData: AlgorithmInfo[] = [
     id: "recursive-backtracker",
     name: "Recursive Backtracker (DFS)",
     description:
-      "Algoritmo mais popular baseado em busca em profundidade. Ramifica em direção aleatória até encontrar beco sem saída, então retrocede.",
+      "Algoritmo mais popular baseado em busca em profundidade. Ramifica em direção aleatória até encontrar beco sem saída, então retrocede até encontrar um caminho não explorado.",
     complexity: {
       time: "O(n)",
       space: "O(n)",
@@ -30,9 +30,9 @@ export const algorithmsData: AlgorithmInfo[] = [
     characteristics: [
       "Gera labirintos com longos corredores",
       "Baixo fator de ramificação",
-      "Algoritmo mais usado",
+      "Algoritmo mais usado na prática",
       "Requer stack para backtracking",
-      "Naturalmente recursivo",
+      'Produz labirintos mais "river-like"',
     ],
   },
   {
