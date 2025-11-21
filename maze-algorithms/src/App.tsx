@@ -12,6 +12,12 @@ import { generateGrowingTree } from "./algorithms/growingTree";
 import { generateHuntAndKill } from "./algorithms/huntAndKill";
 import { generateRecursiveDivision } from "./algorithms/recursiveDivision";
 import { generateSidewinder } from "./algorithms/sidewinder";
+import { createHorizontalTiles } from "./utils/tileFactory";
+import { mergeTilesHorizontal } from "./utils/gridMerger";
+import { MazeGame } from "./components/MazeGame";
+
+const tiles = createHorizontalTiles(2, 10, 10);
+const bigGrid = mergeTilesHorizontal(tiles);
 
 // Código exemplo Binary Tree
 const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
@@ -404,6 +410,7 @@ const sidewinderCode = `function generateSidewinder(rows: number, cols: number):
 
   return grid;
 }`;
+
 function App() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 py-8 px-4">
@@ -494,6 +501,16 @@ function App() {
           info={algorithmsData[10]}
           generateFn={generateSidewinder}
           code={sidewinderCode}
+        />
+
+        <MazeGame
+          grid={bigGrid}
+          cellSize={24}
+          config={
+            {
+              /* opcoes do player, cores, etc */
+            }
+          }
         />
       </div>
     </div>
