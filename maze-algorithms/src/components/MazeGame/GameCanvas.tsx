@@ -134,14 +134,13 @@ export function GameCanvas({
       ctx.font = "bold 32px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("🎉 Você Venceu! 🎉", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("🎉Você Venceu!🎉", canvas.width / 2, canvas.height / 2);
 
       ctx.font = "16px sans-serif";
-      ctx.fillText(
-        'Pressione "Jogar" para começar novamente',
-        canvas.width / 2,
-        canvas.height / 2 + 40
-      );
+      const line1 = 'Pressione "Jogar" para';
+      const line2 = "começar novamente";
+      ctx.fillText(line1, canvas.width / 2, canvas.height / 2 + 30);
+      ctx.fillText(line2, canvas.width / 2, canvas.height / 2 + 50);
     }
   }, [grid, gameState, config, cellSize]);
 
