@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type AlgorithmInfo } from "../types/maze";
 import { MazeRenderer } from "./MazeRenderer";
 import { type MazeGrid } from "../types/maze";
+import { MazeGame } from "./MazeGame";
 
 interface AlgorithmSectionProps {
   info: AlgorithmInfo;
@@ -17,6 +18,7 @@ export function AlgorithmSection({
   const [maze, setMaze] = useState<MazeGrid | null>(null);
   const [size, setSize] = useState(15);
   const [showCode, setShowCode] = useState(false);
+  const [showGame, setShowGame] = useState(false);
 
   const handleGenerate = () => {
     const newMaze = generateFn(size, size);
@@ -94,6 +96,15 @@ export function AlgorithmSection({
           >
             {showCode ? "Esconder" : "Ver"} Código
           </button>
+
+          {maze && (
+            <button
+              onClick={() => setShowGame(!showGame)}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
+            >
+              {showGame ? "Ver Labirinto" : "🎮 Jogar"}
+            </button>
+          )}
         </div>
 
         {/* Código */}
@@ -105,10 +116,14 @@ export function AlgorithmSection({
           </div>
         )}
 
-        {/* Renderização do Labirinto */}
+        {/* Renderização do Labirinto ou Jogo */}
         {maze && (
           <div className="bg-white dark:bg-slate-900 p-6 rounded-md border border-slate-200 dark:border-slate-700">
-            <MazeRenderer grid={maze} cellSize={20} />
+            {showGame ? (
+              <MazeGame grid={maze} cellSize={20} />
+            ) : (
+              <MazeRenderer grid={maze} cellSize={20} />
+            )}
           </div>
         )}
       </div>
