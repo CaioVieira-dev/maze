@@ -9,8 +9,8 @@ import {
 import {
   canMove,
   getNextPosition,
-  generateCheckpoints,
   isSamePosition,
+  getAccessiblePositions,
 } from "../utils/gameHelpers";
 
 const DEFAULT_CONFIG: Required<GameConfig> = {
@@ -26,18 +26,39 @@ const DEFAULT_CONFIG: Required<GameConfig> = {
 
 export function useMazeGame(grid: MazeGrid, config: GameConfig = {}) {
   const fullConfig = { ...DEFAULT_CONFIG, ...config };
-  const rows = grid.length;
-  const cols = grid[0].length;
 
+  // Adicionar auto-seleção de start/end/checkpoints acessíveis
   const [gameState, setGameState] = useState<GameState>(() => {
     const startPosition: Position = { row: 0, col: 0 };
-    const endPosition: Position = { row: rows - 1, col: cols - 1 };
-    const checkpoints = generateCheckpoints(
-      grid,
-      startPosition,
-      endPosition,
-      fullConfig.numCheckpoints
-    );
+    const accessible = getAccessiblePositions(grid, startPosition);
+
+    // Função que escolhe posições aleatoriamente dentre as acessíveis e não-start
+    function getRandomAccessiblePosition(exclude: Set<string>): Position {
+      const accessibleArray = Array.from(accessible)
+        .map((s) => {
+          const [r, c] = s.split(",").map(Number);
+          return { row: r, col: c };
+        })
+        .filter((pos) => !exclude.has(`${pos.row},${pos.col}`));
+      return accessibleArray[
+        Math.floor(Math.random() * accessibleArray.length)
+      ];
+    }
+
+    const exclude = new Set<string>([
+      `${startPosition.row},${startPosition.col}`,
+    ]);
+    const checkpoints: Position[] = [];
+    const numCheckpoints = config?.numCheckpoints ?? 3;
+
+    for (let i = 0; i < numCheckpoints; i++) {
+      const cp = getRandomAccessiblePosition(exclude);
+      checkpoints.push(cp);
+      exclude.add(`${cp.row},${cp.col}`);
+    }
+
+    // Escolher fim em posição acessível que não coincida com start nem checkpoints
+    const endPosition = getRandomAccessiblePosition(exclude);
 
     return {
       playerPosition: { ...startPosition },

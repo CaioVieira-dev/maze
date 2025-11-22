@@ -99,3 +99,40 @@ export function generateCheckpoints(
 export function isSamePosition(pos1: Position, pos2: Position): boolean {
   return pos1.row === pos2.row && pos1.col === pos2.col;
 }
+
+export function getAccessiblePositions(
+  grid: MazeGrid,
+  start: Position
+): Set<string> {
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const visited = new Set<string>();
+  const queue: Position[] = [start];
+  visited.add(`${start.row},${start.col}`);
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const neighbors = [
+      { row: current.row - 1, col: current.col },
+      { row: current.row + 1, col: current.col },
+      { row: current.row, col: current.col - 1 },
+      { row: current.row, col: current.col + 1 },
+    ];
+
+    for (const n of neighbors) {
+      if (
+        n.row >= 0 &&
+        n.row < rows &&
+        n.col >= 0 &&
+        n.col < cols &&
+        !visited.has(`${n.row},${n.col}`) &&
+        canMove(grid, current, n)
+      ) {
+        visited.add(`${n.row},${n.col}`);
+        queue.push(n);
+      }
+    }
+  }
+
+  return visited;
+}
