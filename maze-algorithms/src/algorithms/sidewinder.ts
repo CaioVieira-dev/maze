@@ -57,3 +57,47 @@ export function generateSidewinder(rows: number, cols: number): MazeGrid {
 
   return grid;
 }
+
+// Código exemplo Sidewinder
+export const sidewinderCode = `function generateSidewinder(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  for (let row = 0; row < rows; row++) {
+    let runStart = 0;
+
+    for (let col = 0; col < cols; col++) {
+      const current = grid[row][col];
+
+      // PRIMEIRA LINHA: sempre vai para o leste
+      if (row === 0) {
+        if (col < cols - 1) {
+          removeWall(current, east);
+        }
+        continue;
+      }
+
+      // OUTRAS LINHAS: lógica normal
+      const isLastCol = col === cols - 1;
+
+      if (isLastCol) {
+        // Fechar run - ir ao norte
+        const randomCol = runStart + random(col - runStart + 1);
+        removeWall(grid[row][randomCol], north);
+      } else {
+        const shouldCloseRun = Math.random() < 0.5;
+
+        if (shouldCloseRun) {
+          // Fechar run - escolher célula para norte
+          const randomCol = runStart + random(col - runStart + 1);
+          removeWall(grid[row][randomCol], north);
+          runStart = col + 1; // Novo run
+        } else {
+          // Continuar run para leste
+          removeWall(current, east);
+        }
+      }
+    }
+  }
+
+  return grid;
+}`;

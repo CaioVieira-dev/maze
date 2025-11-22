@@ -65,3 +65,35 @@ function chooseCellIndex(length: number): number {
     return Math.floor(Math.random() * length);
   }
 }
+
+// Código exemplo Growing Tree
+export const growingTreeCode = `function generateGrowingTree(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const cells: Cell[] = [];
+
+  // Célula inicial
+  const startCell = grid[randomRow][randomCol];
+  startCell.visited = true;
+  cells.push(startCell);
+
+  while (cells.length > 0) {
+    // Escolher célula usando estratégia
+    // 50% newest (DFS), 50% random (Prim)
+    const index = chooseCellIndex(cells.length);
+    const current = cells[index];
+
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      const chosen = randomChoice(unvisitedNeighbors);
+      removeWall(current, chosen);
+      chosen.visited = true;
+      cells.push(chosen);
+    } else {
+      // Sem vizinhos, remover da lista
+      cells.splice(index, 1);
+    }
+  }
+
+  return grid;
+}`;

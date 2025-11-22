@@ -131,3 +131,38 @@ function chooseOrientation(
     return Math.random() < 0.5 ? "horizontal" : "vertical";
   }
 }
+
+// Código exemplo Recursive Backtracker
+export const recursiveBacktrackerCode = `function generateRecursiveBacktracker(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const stack: Cell[] = [];
+
+  // Começar na célula (0, 0)
+  const startCell = grid[0][0];
+  startCell.visited = true;
+  stack.push(startCell);
+
+  while (stack.length > 0) {
+    const current = stack[stack.length - 1]; // Peek
+
+    // Obter vizinhos não visitados
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      // Escolher vizinho aleatório
+      const chosen = randomChoice(unvisitedNeighbors);
+
+      // Remover parede entre current e chosen
+      removeWall(current, chosen);
+
+      // Adicionar à pilha
+      chosen.visited = true;
+      stack.push(chosen);
+    } else {
+      // Backtrack
+      stack.pop();
+    }
+  }
+
+  return grid;
+}`;

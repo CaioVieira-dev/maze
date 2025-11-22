@@ -68,3 +68,41 @@ function hunt(grid: MazeGrid, rows: number, cols: number): Cell | null {
   // Não encontrou nenhuma célula não visitada - terminado
   return null;
 }
+// Código exemplo Hunt-and-Kill
+export const huntAndKillCode = `function generateHuntAndKill(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  let current = grid[randomRow][randomCol];
+  current.visited = true;
+
+  while (current !== null) {
+    // Fase "Kill" - Random walk
+    const unvisitedNeighbors = getNeighbors(grid, current, true);
+
+    if (unvisitedNeighbors.length > 0) {
+      const chosen = randomChoice(unvisitedNeighbors);
+      removeWall(current, chosen);
+      chosen.visited = true;
+      current = chosen;
+    } else {
+      // Fase "Hunt" - Escanear grid
+      current = hunt(grid);
+    }
+  }
+
+  return grid;
+}
+
+function hunt(grid: MazeGrid): Cell | null {
+  // Escanear cada célula procurando não visitada
+  // adjacente a visitada
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (!cell.visited && hasVisitedNeighbor(cell)) {
+        connectToVisitedNeighbor(cell);
+        return cell;
+      }
+    }
+  }
+  return null; // Terminado
+}`;

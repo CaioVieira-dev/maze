@@ -61,3 +61,33 @@ function getValidNeighbors(grid: MazeGrid, cell: Cell): Cell[] {
 
   return neighbors;
 }
+
+// Código exemplo Aldous-Broder
+export const aldousBroderCode = `function generateAldousBroder(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  
+  // Começar em célula aleatória
+  let current = grid[randomRow][randomCol];
+  current.visited = true;
+
+  let remaining = rows * cols - 1;
+
+  // Continuar até todas serem visitadas
+  while (remaining > 0) {
+    // Escolher vizinho aleatório
+    const next = randomChoice(getNeighbors(current));
+
+    // Se não foi visitado, conectar
+    if (!next.visited) {
+      removeWall(current, next);
+      next.visited = true;
+      remaining--;
+    }
+
+    // Mover para o vizinho (visitado ou não!)
+    // Essa é a ineficiência do algoritmo
+    current = next;
+  }
+
+  return grid;
+}`;

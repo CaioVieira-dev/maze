@@ -75,3 +75,38 @@ function shuffleArray<T>(array: T[]): void {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+// Código exemplo Kruskal
+export const kruskalCode = `function generateKruskal(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const walls: Wall[] = [];
+  const disjointSet = new DisjointSet();
+
+  // Criar conjunto para cada célula
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      disjointSet.makeSet(\`\${row},\${col}\`);
+    }
+  }
+
+  // Coletar todas as paredes
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (col < cols - 1) walls.push({cell1, cell2: right});
+      if (row < rows - 1) walls.push({cell1, cell2: bottom});
+    }
+  }
+
+  // Embaralhar paredes
+  shuffleArray(walls);
+
+  // Processar cada parede
+  for (const wall of walls) {
+    if (!disjointSet.connected(key1, key2)) {
+      removeWall(wall.cell1, wall.cell2);
+      disjointSet.union(key1, key2);
+    }
+  }
+
+  return grid;
+}`;

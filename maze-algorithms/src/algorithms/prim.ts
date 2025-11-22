@@ -67,3 +67,35 @@ function addToFrontier(grid: MazeGrid, cell: Cell, frontier: Cell[]): void {
     }
   }
 }
+// Código exemplo Prim
+export const primCode = `function generatePrim(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+  const frontier: Cell[] = [];
+
+  // Começar com célula aleatória
+  const startCell = grid[randomRow][randomCol];
+  startCell.visited = true;
+
+  // Adicionar vizinhos à fronteira
+  addToFrontier(grid, startCell, frontier);
+
+  while (frontier.length > 0) {
+    // Escolher célula aleatória da fronteira
+    const current = frontier.splice(randomIndex, 1)[0];
+
+    // Obter vizinhos visitados
+    const visitedNeighbors = getNeighbors(grid, current)
+      .filter(n => n.visited);
+
+    if (visitedNeighbors.length > 0) {
+      // Conectar a um vizinho visitado aleatório
+      const chosen = randomChoice(visitedNeighbors);
+      removeWall(current, chosen);
+      
+      current.visited = true;
+      addToFrontier(grid, current, frontier);
+    }
+  }
+
+  return grid;
+}`;

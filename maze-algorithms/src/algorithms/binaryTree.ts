@@ -33,3 +33,29 @@ export function generateBinaryTree(rows: number, cols: number): MazeGrid {
 
   return grid;
 }
+
+// Código exemplo Binary Tree
+export const binaryTreeCode = `function generateBinaryTree(rows: number, cols: number): MazeGrid {
+  const grid = createEmptyGrid(rows, cols);
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const current = grid[row][col];
+      const neighbors = [];
+
+      // Norte
+      if (row > 0) neighbors.push(grid[row - 1][col]);
+      
+      // Leste
+      if (col < cols - 1) neighbors.push(grid[row][col + 1]);
+
+      // Escolhe aleatoriamente e remove parede
+      if (neighbors.length > 0) {
+        const chosen = randomChoice(neighbors);
+        removeWall(current, chosen);
+      }
+    }
+  }
+
+  return grid;
+}`;
