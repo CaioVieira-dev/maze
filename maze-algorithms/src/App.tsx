@@ -21,12 +21,25 @@ import {
   recursiveBacktrackerCode,
 } from "./algorithms/recursiveDivision";
 import { generateSidewinder, sidewinderCode } from "./algorithms/sidewinder";
-import { createHorizontalTiles } from "./utils/tileFactory";
-import { mergeTilesHorizontal } from "./utils/gridMerger";
 import { MazeGame } from "./components/MazeGame";
+import { connectTiles, createTile } from "./utils/tileFactory";
+import { mergeTileLayout } from "./utils/gridMerger";
 
-const tiles = createHorizontalTiles(2, 10, 10);
-const bigGrid = mergeTilesHorizontal(tiles);
+// montar layout, gerar tiles e conectá-los
+const tileA = createTile("A", "binary-tree");
+const tileB = createTile("B", "recursive-backtracker");
+const tileC = createTile("C", "recursive-backtracker");
+
+// conecta tileA à direita do tileB
+connectTiles(tileA, tileB, "right");
+connectTiles(tileA, tileC, "down");
+
+const layout = [
+  [tileA, tileB],
+  [tileC, null],
+];
+
+const bigMazeGrid = mergeTileLayout(layout);
 
 function App() {
   return (
@@ -121,7 +134,7 @@ function App() {
         />
 
         <MazeGame
-          grid={bigGrid}
+          grid={bigMazeGrid}
           cellSize={24}
           config={
             {

@@ -1,11 +1,14 @@
 import type { MazeTile } from "../types/tiles";
 import type { Position } from "../types/game";
 
+// Recebe mapa de tiles para busca rápida
+type TilesMap = Map<string, MazeTile>;
+
 export function handleTileTransition(
   currentTile: MazeTile,
   playerPos: Position,
   direction: "right" | "left" | "up" | "down",
-  tiles: MazeTile[],
+  tilesMap: TilesMap,
   setCurrentTile: (tile: MazeTile) => void,
   setPlayerPos: (pos: Position) => void
 ) {
@@ -17,11 +20,11 @@ export function handleTileTransition(
   );
 
   if (exit) {
-    const nextTile = tiles.find((t) => t.id === exit.neighborTileId);
+    const nextTile = tilesMap.get(exit.neighborTileId);
     if (nextTile) {
       setCurrentTile(nextTile);
       setPlayerPos(exit.neighborPosition);
     }
   }
-  // senão, prossiga o movimento normal dentro do tile
+  // Caso contrário, movimento dentro do tile normal
 }

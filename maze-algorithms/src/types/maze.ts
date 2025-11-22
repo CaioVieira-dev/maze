@@ -1,3 +1,5 @@
+import type { MazeTile } from "./tiles";
+
 // Representa uma célula individual do labirinto
 export interface Cell {
   row: number;
@@ -46,3 +48,5 @@ export interface AlgorithmInfo {
   };
   characteristics: string[];
 }
+
+export type MazeLayout = (MazeTile | null)[][];

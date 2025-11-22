@@ -46,6 +46,7 @@ export function GameCanvas({
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
         const cell = grid[row][col];
+        if (!cell?.walls) continue;
         const x = col * cellSize;
         const y = row * cellSize;
 
