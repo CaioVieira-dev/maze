@@ -2,6 +2,24 @@ import type { MazeGrid, Cell } from "../types/maze";
 
 import type { MazeTile } from "../types/tiles";
 
+type TileCoord = { tr: number; tc: number; tile: MazeTile };
+
+function forEachTile(
+  layout: (MazeTile | null)[][],
+  callback: (info: TileCoord) => void
+) {
+  const tileRows = layout.length;
+  const tileCols = layout[0]?.length || 0;
+
+  for (let tr = 0; tr < tileRows; tr++) {
+    for (let tc = 0; tc < tileCols; tc++) {
+      const tile = layout[tr][tc];
+      if (!tile) continue;
+      callback({ tr, tc, tile });
+    }
+  }
+}
+
 export function mergeTileLayout(layout: (MazeTile | null)[][]): MazeGrid {
   const tileRows = layout.length;
   const tileCols = layout[0]?.length || 0;
@@ -29,74 +47,64 @@ export function mergeTileLayout(layout: (MazeTile | null)[][]): MazeGrid {
   );
 
   // Copiar células com ajustes de row/col globais
-  for (let tr = 0; tr < tileRows; tr++) {
-    for (let tc = 0; tc < tileCols; tc++) {
-      const tile = layout[tr][tc];
-      if (!tile) continue;
-
-      for (let r = 0; r < tileHeight; r++) {
-        for (let c = 0; c < tileWidth; c++) {
-          const globalRow = tr * tileHeight + r;
-          const globalCol = tc * tileWidth + c;
-          mergedGrid[globalRow][globalCol] = {
-            ...tile.grid[r][c],
-            row: globalRow,
-            col: globalCol,
-          };
-        }
+  forEachTile(layout, ({ tc, tile, tr }) => {
+    for (let r = 0; r < tileHeight; r++) {
+      for (let c = 0; c < tileWidth; c++) {
+        const globalRow = tr * tileHeight + r;
+        const globalCol = tc * tileWidth + c;
+        mergedGrid[globalRow][globalCol] = {
+          ...tile.grid[r][c],
+          row: globalRow,
+          col: globalCol,
+        };
       }
     }
-  }
+  });
 
   // Remover paredes entre tiles conectados (usar exits)
-  for (let tr = 0; tr < tileRows; tr++) {
-    for (let tc = 0; tc < tileCols; tc++) {
-      const tile = layout[tr][tc];
-      if (!tile) continue;
+  forEachTile(layout, ({ tc, tile, tr }) => {
+    for (const exit of tile.exits) {
+      // Encontrar tile vizinho
+      const neighborTileIndex = layout
+        .flat()
+        .findIndex((t) => t?.id === exit.neighborTileId);
+      if (neighborTileIndex === -1) continue; // Vizinho não na grade (ou nulo)
 
-      for (const exit of tile.exits) {
-        // Encontrar tile vizinho
-        const neighborTileIndex = layout
-          .flat()
-          .findIndex((t) => t?.id === exit.neighborTileId);
-        if (neighborTileIndex === -1) continue; // Vizinho não na grade (ou nulo)
+      // Converter índice linear para 2D
+      const nr = Math.floor(neighborTileIndex / tileCols);
+      const nc = neighborTileIndex % tileCols;
+      const neighborTile = layout[nr][nc];
+      if (!neighborTile) continue;
 
-        // Converter índice linear para 2D
-        const nr = Math.floor(neighborTileIndex / tileCols);
-        const nc = neighborTileIndex % tileCols;
-        const neighborTile = layout[nr][nc];
-        if (!neighborTile) continue;
+      // Coordenadas globais das posições local e vizinha
+      const globalLocRow = tr * tileHeight + exit.localPosition.row;
+      const globalLocCol = tc * tileWidth + exit.localPosition.col;
+      const globalNeighRow = nr * tileHeight + exit.neighborPosition.row;
+      const globalNeighCol = nc * tileWidth + exit.neighborPosition.col;
 
-        // Coordenadas globais das posições local e vizinha
-        const globalLocRow = tr * tileHeight + exit.localPosition.row;
-        const globalLocCol = tc * tileWidth + exit.localPosition.col;
-        const globalNeighRow = nr * tileHeight + exit.neighborPosition.row;
-        const globalNeighCol = nc * tileWidth + exit.neighborPosition.col;
+      // Remover parede entre células conectadas
+      const cellA = mergedGrid[globalLocRow][globalLocCol];
+      const cellB = mergedGrid[globalNeighRow][globalNeighCol];
 
-        // Remover parede entre células conectadas
-        const cellA = mergedGrid[globalLocRow][globalLocCol];
-        const cellB = mergedGrid[globalNeighRow][globalNeighCol];
+      // Mesma lógica do removeWall para sincronizar paredes
+      const rowDiff = cellA.row - cellB.row;
+      const colDiff = cellA.col - cellB.col;
 
-        // Mesma lógica do removeWall para sincronizar paredes
-        const rowDiff = cellA.row - cellB.row;
-        const colDiff = cellA.col - cellB.col;
-
-        if (rowDiff === 1) {
-          cellA.walls.top = false;
-          cellB.walls.bottom = false;
-        } else if (rowDiff === -1) {
-          cellA.walls.bottom = false;
-          cellB.walls.top = false;
-        } else if (colDiff === 1) {
-          cellA.walls.left = false;
-          cellB.walls.right = false;
-        } else if (colDiff === -1) {
-          cellA.walls.right = false;
-          cellB.walls.left = false;
-        }
+      if (rowDiff === 1) {
+        cellA.walls.top = false;
+        cellB.walls.bottom = false;
+      } else if (rowDiff === -1) {
+        cellA.walls.bottom = false;
+        cellB.walls.top = false;
+      } else if (colDiff === 1) {
+        cellA.walls.left = false;
+        cellB.walls.right = false;
+      } else if (colDiff === -1) {
+        cellA.walls.right = false;
+        cellB.walls.left = false;
       }
     }
-  }
+  });
 
   return mergedGrid;
 }
