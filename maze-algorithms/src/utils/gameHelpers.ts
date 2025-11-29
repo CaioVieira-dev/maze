@@ -56,44 +56,6 @@ export function getNextPosition(pos: Position, direction: Direction): Position {
 }
 
 /**
- * Gera posições aleatórias para checkpoints, garantindo que são alcançáveis
- */
-export function generateCheckpoints(
-  grid: MazeGrid,
-  start: Position,
-  end: Position,
-  count: number
-): Position[] {
-  const checkpoints: Position[] = [];
-  const rows = grid.length;
-  const cols = grid[0].length;
-
-  while (checkpoints.length < count) {
-    const pos: Position = {
-      row: Math.floor(Math.random() * rows),
-      col: Math.floor(Math.random() * cols),
-    };
-
-    // Verificar se não é a posição de início ou fim
-    if (
-      (pos.row === start.row && pos.col === start.col) ||
-      (pos.row === end.row && pos.col === end.col)
-    ) {
-      continue;
-    }
-
-    // Verificar se já não existe um checkpoint nessa posição
-    if (checkpoints.some((cp) => cp.row === pos.row && cp.col === pos.col)) {
-      continue;
-    }
-
-    checkpoints.push(pos);
-  }
-
-  return checkpoints;
-}
-
-/**
  * Verifica se duas posições são iguais
  */
 export function isSamePosition(pos1: Position, pos2: Position): boolean {
