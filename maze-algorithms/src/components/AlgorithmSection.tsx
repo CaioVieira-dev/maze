@@ -4,6 +4,7 @@ import { MazeRenderer } from "./MazeRenderer";
 import { type MazeGrid } from "../types/maze";
 import { MazeGame } from "./MazeGame";
 import { Section } from "./ui/Section";
+import { Button } from "./ui/Button";
 
 interface AlgorithmSectionProps {
   info: AlgorithmInfo;
@@ -83,27 +84,16 @@ export function AlgorithmSection({
           </span>
         </div>
 
-        <button
-          onClick={handleGenerate}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
-        >
-          Gerar Labirinto
-        </button>
+        <Button label="Gerar Labirinto" onClick={handleGenerate} />
 
-        <button
-          onClick={() => setShowCode(!showCode)}
-          className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-md transition-colors"
-        >
+        <Button onClick={() => setShowCode(!showCode)}>
           {showCode ? "Esconder" : "Ver"} Código
-        </button>
+        </Button>
 
         {maze && (
-          <button
-            onClick={() => setShowGame(!showGame)}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
-          >
+          <Button onClick={() => setShowGame(!showGame)} bgColor="purple">
             {showGame ? "Ver Labirinto" : "🎮 Jogar"}
-          </button>
+          </Button>
         )}
       </div>
 
