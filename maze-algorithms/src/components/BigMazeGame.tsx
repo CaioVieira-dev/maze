@@ -1,33 +1,33 @@
-import { mergeTileLayout } from "../utils/gridMerger";
-import { connectTiles, createTile } from "../utils/tileFactory";
+import { useState } from "react";
 import { MazeGame } from "./MazeGame";
 import { Section } from "./ui/Section";
-
-// montar layout, gerar tiles e conectá-los
-const tileA = createTile("A", "binary-tree");
-const tileB = createTile("B", "recursive-backtracker");
-const tileC = createTile("C", "recursive-backtracker");
-
-// conecta tileA à direita do tileB
-connectTiles(tileA, tileB, "right");
-connectTiles(tileA, tileC, "down");
-
-const layout = [
-  [tileA, tileB],
-  [tileC, null],
-];
-
-const bigMazeGrid = mergeTileLayout(layout);
+import { useMazeConfig } from "../hooks/useMazeConfig";
+import { MazeConfigPanel } from "./MazeConfigPanel";
+import { generateMazeFromConfig } from "./mazeGenerator";
+import { Button } from "./ui/Button";
 
 export function BigMazeGame() {
+  const [showConfig, setShowConfig] = useState(true);
+  const mazeConfig = useMazeConfig(2);
+
   return (
     <Section id="bigmaze">
+      <div className="flex flex-col gap-2">
+        <div className="">
+          <Button onClick={() => setShowConfig(!showConfig)}>
+            {showConfig ? "Esconder" : "Mostrar"} Configurações
+          </Button>
+        </div>
+
+        {showConfig && <MazeConfigPanel {...mazeConfig} />}
+      </div>
+
       <MazeGame
-        grid={bigMazeGrid}
+        grid={generateMazeFromConfig(mazeConfig.rows, mazeConfig.tilesPerRow)}
         cellSize={24}
         config={
           {
-            /* opcoes do player, cores, etc */
+            /* opções do player, cores, etc */
           }
         }
       />
