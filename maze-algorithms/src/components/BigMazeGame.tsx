@@ -1,6 +1,7 @@
 import { mergeTileLayout } from "../utils/gridMerger";
 import { connectTiles, createTile } from "../utils/tileFactory";
 import { MazeGame } from "./MazeGame";
+import { Section } from "./ui/Section";
 
 // montar layout, gerar tiles e conectá-los
 const tileA = createTile("A", "binary-tree");
@@ -20,14 +21,16 @@ const bigMazeGrid = mergeTileLayout(layout);
 
 export function BigMazeGame() {
   return (
-    <MazeGame
-      grid={bigMazeGrid}
-      cellSize={24}
-      config={
-        {
-          /* opcoes do player, cores, etc */
+    <Section id="bigmaze">
+      <MazeGame
+        grid={bigMazeGrid}
+        cellSize={24}
+        config={
+          {
+            /* opcoes do player, cores, etc */
+          }
         }
-      }
-    />
+      />
+    </Section>
   );
 }
