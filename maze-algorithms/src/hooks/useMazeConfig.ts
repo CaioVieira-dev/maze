@@ -16,6 +16,90 @@ export interface RowConfig {
   tiles: TileConfig[];
 }
 
+// Função auxiliar para criar conexões automáticas
+function createAutoConnectedTile(
+  id: string,
+  rowIndex: number,
+  tileIndex: number,
+  tilesPerRow: number,
+  existingRows: RowConfig[],
+): TileConfig {
+  const connections: TileConfig["connections"] = [];
+
+  // Conectar à esquerda (se não for o primeiro da linha)
+  if (tileIndex > 0) {
+    const leftId = String.fromCharCode(
+      65 + rowIndex * tilesPerRow + tileIndex - 1,
+    );
+    connections.push({ direction: "left", targetId: leftId });
+  }
+
+  // Conectar à direita (se não for o último da linha)
+  if (tileIndex < tilesPerRow - 1) {
+    const rightId = String.fromCharCode(
+      65 + rowIndex * tilesPerRow + tileIndex + 1,
+    );
+    connections.push({ direction: "right", targetId: rightId });
+  }
+
+  // Conectar para cima (se não for a primeira linha)
+  if (rowIndex > 0 && existingRows[rowIndex - 1]?.tiles[tileIndex]) {
+    const upId = existingRows[rowIndex - 1].tiles[tileIndex].id;
+    connections.push({ direction: "up", targetId: upId });
+  }
+
+  // Conectar para baixo (se já existir linha abaixo)
+  if (
+    rowIndex < existingRows.length &&
+    existingRows[rowIndex]?.tiles[tileIndex]
+  ) {
+    const downId = existingRows[rowIndex].tiles[tileIndex].id;
+    connections.push({ direction: "down", targetId: downId });
+  }
+
+  return {
+    id,
+    algorithm: getRandomGeneratorId(),
+    connections,
+  };
+}
+
+// Função para adicionar conexão "up" aos tiles da linha anterior
+function addUpConnectionsToPreviousRow(
+  rows: RowConfig[],
+  newRowIndex: number,
+  newRowTiles: TileConfig[],
+): RowConfig[] {
+  if (newRowIndex === 0) return rows;
+
+  return rows.map((row, rIdx) => {
+    if (rIdx !== newRowIndex - 1) return row;
+
+    return {
+      ...row,
+      tiles: row.tiles.map((tile, tIdx) => {
+        // Adiciona conexão "down" para o tile correspondente na nova linha
+        const newTile = newRowTiles[tIdx];
+        if (!newTile) return tile;
+
+        const hasDownConnection = tile.connections.some(
+          (conn) => conn.direction === "down" && conn.targetId === newTile.id,
+        );
+
+        if (hasDownConnection) return tile;
+
+        return {
+          ...tile,
+          connections: [
+            ...tile.connections,
+            { direction: "down", targetId: newTile.id },
+          ],
+        };
+      }),
+    };
+  });
+}
+
 export function useMazeConfig(initialTilesPerRow = 2) {
   const [rows, setRows] = useState<RowConfig[]>([
     {
@@ -25,7 +109,11 @@ export function useMazeConfig(initialTilesPerRow = 2) {
           algorithm: getRandomGeneratorId(),
           connections: [{ direction: "right", targetId: "B" }],
         },
-        { id: "B", algorithm: getRandomGeneratorId(), connections: [] },
+        {
+          id: "B",
+          algorithm: getRandomGeneratorId(),
+          connections: [{ direction: "left", targetId: "A" }],
+        },
       ],
     },
   ]);
@@ -35,29 +123,52 @@ export function useMazeConfig(initialTilesPerRow = 2) {
     const newRowIndex = rows.length;
     const newTiles: TileConfig[] = [];
 
+    // Criar novos tiles com conexões automáticas
     for (let i = 0; i < tilesPerRow; i++) {
       const nextIdIndex = 65 + newRowIndex * tilesPerRow + i;
       const id = String.fromCharCode(nextIdIndex);
-      const lastTargetId = String.fromCharCode(nextIdIndex - 1);
-      newTiles.push({
+
+      const tile = createAutoConnectedTile(
         id,
-        algorithm: getRandomGeneratorId(),
-        connections: [
-          {
-            direction: "left",
-            targetId: lastTargetId,
-          },
-        ],
-      });
+        newRowIndex,
+        i,
+        tilesPerRow,
+        rows,
+      );
+      newTiles.push(tile);
     }
 
-    setRows([...rows, { tiles: newTiles }]);
+    // Adicionar conexões "down" na linha anterior
+    const updatedRows = addUpConnectionsToPreviousRow(
+      rows,
+      newRowIndex,
+      newTiles,
+    );
+
+    setRows([...updatedRows, { tiles: newTiles }]);
   };
 
   const onRemoveRow = (rowIndex: number) => {
-    if (rows.length > 1) {
-      setRows(rows.filter((_, index) => index !== rowIndex));
-    }
+    if (rows.length <= 1) return;
+
+    setRows((prevRows) => {
+      const newRows = prevRows.filter((_, index) => index !== rowIndex);
+
+      // Remover conexões "down" da linha anterior que apontam para a linha removida
+      return newRows.map((row, rIdx) => {
+        if (rIdx !== rowIndex - 1) return row;
+
+        return {
+          ...row,
+          tiles: row.tiles.map((tile) => ({
+            ...tile,
+            connections: tile.connections.filter(
+              (conn) => conn.direction !== "down",
+            ),
+          })),
+        };
+      });
+    });
   };
 
   const onAlgorithmChange = (
@@ -65,43 +176,74 @@ export function useMazeConfig(initialTilesPerRow = 2) {
     tileIndex: number,
     algorithm: AlgorithmType,
   ) => {
-    const newRows = [...rows];
-    newRows[rowIndex].tiles[tileIndex].algorithm = algorithm;
-    setRows(newRows);
+    setRows((prevRows) => {
+      const newRows = [...prevRows];
+      newRows[rowIndex] = {
+        ...newRows[rowIndex],
+        tiles: [...newRows[rowIndex].tiles],
+      };
+      newRows[rowIndex].tiles[tileIndex] = {
+        ...newRows[rowIndex].tiles[tileIndex],
+        algorithm,
+      };
+      return newRows;
+    });
   };
 
   const onTilesPerRowChange = (count: number) => {
     if (count < 1 || count > 10) return;
 
     setTilesPerRow(count);
-    const newRows = rows.map((row, rowIndex) => {
-      const currentTiles = row.tiles.length;
-      const tiles = [...row.tiles];
 
-      if (count > currentTiles) {
-        for (let i = currentTiles; i < count; i++) {
-          const nextIdIndex = 65 + rowIndex * count + i;
-          const id = String.fromCharCode(nextIdIndex);
-          const lastTargetId = String.fromCharCode(nextIdIndex - 1);
-          tiles.push({
-            id,
-            algorithm: getRandomGeneratorId(),
-            connections: [
-              {
-                direction: "left",
-                targetId: lastTargetId,
-              },
-            ],
-          });
+    setRows((prevRows) => {
+      return prevRows.map((row, rowIndex) => {
+        const currentTiles = row.tiles.length;
+        const tiles = [...row.tiles];
+
+        if (count > currentTiles) {
+          // Adicionar novos tiles
+          for (let i = currentTiles; i < count; i++) {
+            const nextIdIndex = 65 + rowIndex * count + i;
+            const id = String.fromCharCode(nextIdIndex);
+
+            const newTile = createAutoConnectedTile(
+              id,
+              rowIndex,
+              i,
+              count,
+              prevRows,
+            );
+            tiles.push(newTile);
+          }
+
+          // Atualizar conexões "right" do último tile antigo
+          if (currentTiles > 0) {
+            tiles[currentTiles - 1] = {
+              ...tiles[currentTiles - 1],
+              connections: [
+                ...tiles[currentTiles - 1].connections,
+                { direction: "right", targetId: tiles[currentTiles].id },
+              ],
+            };
+          }
+        } else {
+          // Remover tiles excedentes
+          tiles.splice(count);
+
+          // Remover conexão "right" do último tile restante
+          if (tiles.length > 0) {
+            tiles[tiles.length - 1] = {
+              ...tiles[tiles.length - 1],
+              connections: tiles[tiles.length - 1].connections.filter(
+                (conn) => conn.direction !== "right",
+              ),
+            };
+          }
         }
-      } else {
-        tiles.splice(count);
-      }
 
-      return { tiles };
+        return { tiles };
+      });
     });
-
-    setRows(newRows);
   };
 
   const onToggleConnection = (
@@ -109,51 +251,58 @@ export function useMazeConfig(initialTilesPerRow = 2) {
     tileIndex: number,
     direction: Direction,
   ) => {
-    const newRows = rows.map((row, rIdx) => {
-      if (rIdx !== rowIndex) return row;
+    setRows((prevRows) => {
+      return prevRows.map((row, rIdx) => {
+        if (rIdx !== rowIndex) return row;
 
-      return {
-        ...row,
-        tiles: row.tiles.map((tile, tIdx) => {
-          if (tIdx !== tileIndex) return tile;
+        return {
+          ...row,
+          tiles: row.tiles.map((tile, tIdx) => {
+            if (tIdx !== tileIndex) return tile;
 
-          const existingIndex = tile.connections.findIndex(
-            (conn) => conn.direction === direction,
-          );
-
-          let newConnections: typeof tile.connections;
-
-          if (existingIndex >= 0) {
-            // Remove conexão
-            newConnections = tile.connections.filter(
-              (_, idx) => idx !== existingIndex,
+            const existingIndex = tile.connections.findIndex(
+              (conn) => conn.direction === direction,
             );
-          } else {
-            // Adiciona conexão
-            let targetId = "";
 
-            if (direction === "right" && tileIndex < tilesPerRow - 1) {
-              targetId = row.tiles[tileIndex + 1].id;
-            } else if (direction === "down" && rowIndex < rows.length - 1) {
-              targetId = rows[rowIndex + 1].tiles[tileIndex]?.id || "";
-            }
+            let newConnections: typeof tile.connections;
 
-            if (targetId) {
-              newConnections = [...tile.connections, { direction, targetId }];
+            if (existingIndex >= 0) {
+              // Remove conexão
+              newConnections = tile.connections.filter(
+                (_, idx) => idx !== existingIndex,
+              );
             } else {
-              newConnections = tile.connections;
+              // Adiciona conexão
+              let targetId = "";
+
+              if (direction === "right" && tileIndex < tilesPerRow - 1) {
+                targetId = row.tiles[tileIndex + 1].id;
+              } else if (direction === "left" && tileIndex > 0) {
+                targetId = row.tiles[tileIndex - 1].id;
+              } else if (
+                direction === "down" &&
+                rowIndex < prevRows.length - 1
+              ) {
+                targetId = prevRows[rowIndex + 1].tiles[tileIndex]?.id || "";
+              } else if (direction === "up" && rowIndex > 0) {
+                targetId = prevRows[rowIndex - 1].tiles[tileIndex]?.id || "";
+              }
+
+              if (targetId) {
+                newConnections = [...tile.connections, { direction, targetId }];
+              } else {
+                newConnections = tile.connections;
+              }
             }
-          }
 
-          return {
-            ...tile,
-            connections: newConnections,
-          };
-        }),
-      };
+            return {
+              ...tile,
+              connections: newConnections,
+            };
+          }),
+        };
+      });
     });
-
-    setRows(newRows);
   };
 
   return {
