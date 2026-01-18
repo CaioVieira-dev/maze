@@ -1,8 +1,17 @@
-import { generateRecursiveBacktracker } from "../algorithms/recursiveBacktracker";
 import { removeWall } from "./maze";
 import type { Exit, MazeTile } from "../types/tiles";
 
+import { generateRecursiveBacktracker } from "../algorithms/recursiveBacktracker";
 import { generateBinaryTree } from "../algorithms/binaryTree";
+import { generateEller } from "../algorithms/eller";
+import { generateGrowingTree } from "../algorithms/growingTree";
+import { generateHuntAndKill } from "../algorithms/huntAndKill";
+import { generateKruskal } from "../algorithms/kruskal";
+import { generatePrim } from "../algorithms/prim";
+import { generateRecursiveDivision } from "../algorithms/recursiveDivision";
+import { generateSidewinder } from "../algorithms/sidewinder";
+import { generateWilson } from "../algorithms/wilson";
+import { generateAldousBroder } from "../algorithms/aldousBroder";
 
 import type { AlgorithmType, MazeGrid } from "../types/maze";
 
@@ -13,42 +22,22 @@ const generators: Record<
 > = {
   "binary-tree": generateBinaryTree,
   "recursive-backtracker": generateRecursiveBacktracker,
-  // adicionar demais algoritmos aqui...
-  // exemplo: "prim": generatePrim,
-  prim: () => {
-    throw new Error("Prim ainda não implementado aqui");
-  },
-  kruskal: () => {
-    throw new Error("Kruskal ainda não implementado aqui");
-  },
-  eller: () => {
-    throw new Error("Eller ainda não implementado aqui");
-  },
-  wilson: () => {
-    throw new Error("Wilson ainda não implementado aqui");
-  },
-  "aldous-broder": () => {
-    throw new Error("Aldous-Broder ainda não implementado aqui");
-  },
-  "growing-tree": () => {
-    throw new Error("Growing-Tree ainda não implementado aqui");
-  },
-  "hunt-and-kill": () => {
-    throw new Error("Hunt-and-Kill ainda não implementado aqui");
-  },
-  "recursive-division": () => {
-    throw new Error("Recursive Division ainda não implementado aqui");
-  },
-  sidewinder: () => {
-    throw new Error("Sidewinder ainda não implementado aqui");
-  },
+  prim: generatePrim,
+  kruskal: generateKruskal,
+  eller: generateEller,
+  wilson: generateWilson,
+  "aldous-broder": generateAldousBroder,
+  "growing-tree": generateGrowingTree,
+  "hunt-and-kill": generateHuntAndKill,
+  "recursive-division": generateRecursiveDivision,
+  sidewinder: generateSidewinder,
 };
 
 export function createTile(
   id: string,
   algorithm: AlgorithmType,
   rows = 10,
-  cols = 10
+  cols = 10,
 ): MazeTile {
   const generator = generators[algorithm];
   if (!generator) {
@@ -75,7 +64,7 @@ export function createTile(
         neighborTileId: "",
         localPosition: { row: rows - 1, col: connCol },
         neighborPosition: { row: 0, col: connCol },
-      }
+      },
     );
   }
   if (cols > 1) {
@@ -91,7 +80,7 @@ export function createTile(
         neighborTileId: "",
         localPosition: { row: connRow, col: cols - 1 },
         neighborPosition: { row: connRow, col: 0 },
-      }
+      },
     );
   }
 
@@ -102,7 +91,7 @@ export function createTile(
 export function connectTiles(
   tileA: MazeTile,
   tileB: MazeTile,
-  direction: "right" | "left" | "up" | "down"
+  direction: "right" | "left" | "up" | "down",
 ) {
   const rows = tileA.grid.length;
   const cols = tileA.grid[0].length;
@@ -115,7 +104,7 @@ export function connectTiles(
       posB = { row: posA.row, col: 0 };
       removeWall(
         tileA.grid[posA.row][posA.col],
-        tileB.grid[posB.row][posB.col]
+        tileB.grid[posB.row][posB.col],
       );
 
       tileA.exits.push({
@@ -137,7 +126,7 @@ export function connectTiles(
       posB = { row: posA.row, col: cols - 1 };
       removeWall(
         tileA.grid[posA.row][posA.col],
-        tileB.grid[posB.row][posB.col]
+        tileB.grid[posB.row][posB.col],
       );
 
       tileA.exits.push({
@@ -159,7 +148,7 @@ export function connectTiles(
       posB = { row: rows - 1, col: posA.col };
       removeWall(
         tileA.grid[posA.row][posA.col],
-        tileB.grid[posB.row][posB.col]
+        tileB.grid[posB.row][posB.col],
       );
 
       tileA.exits.push({
@@ -181,7 +170,7 @@ export function connectTiles(
       posB = { row: 0, col: posA.col };
       removeWall(
         tileA.grid[posA.row][posA.col],
-        tileB.grid[posB.row][posB.col]
+        tileB.grid[posB.row][posB.col],
       );
 
       tileA.exits.push({
