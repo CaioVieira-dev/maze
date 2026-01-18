@@ -8,11 +8,15 @@ import { Button } from "./ui/Button";
 
 export function BigMazeGame() {
   const [showConfig, setShowConfig] = useState(true);
+  const [showGame, setShowGame] = useState(false);
   const mazeConfig = useMazeConfig(2);
 
   return (
     <Section id="bigmaze">
-      <div className="flex flex-col gap-2">
+      <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+        Crie um labirinto
+      </h2>
+      <div className="flex flex-col gap-2 mt-4">
         <div className="">
           <Button onClick={() => setShowConfig(!showConfig)}>
             {showConfig ? "Esconder" : "Mostrar"} Configurações
@@ -21,16 +25,20 @@ export function BigMazeGame() {
 
         {showConfig && <MazeConfigPanel {...mazeConfig} />}
       </div>
-
-      <MazeGame
-        grid={generateMazeFromConfig(mazeConfig.rows, mazeConfig.tilesPerRow)}
-        cellSize={24}
-        config={
-          {
-            /* opções do player, cores, etc */
+      <Button onClick={() => setShowGame(!showGame)}>
+        {showGame ? "Esconder" : "Mostrar novo"} Jogo
+      </Button>
+      {showGame && (
+        <MazeGame
+          grid={generateMazeFromConfig(mazeConfig.rows, mazeConfig.tilesPerRow)}
+          cellSize={24}
+          config={
+            {
+              /* opções do player, cores, etc */
+            }
           }
-        }
-      />
+        />
+      )}
     </Section>
   );
 }
