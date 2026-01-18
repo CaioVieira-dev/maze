@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { AlgorithmType } from "../types/maze";
 import type { Direction } from "../types/game";
+import { getRandomGeneratorId } from "../utils/tileFactory";
 
 export interface TileConfig {
   id: string;
@@ -19,8 +20,12 @@ export function useMazeConfig(initialTilesPerRow = 2) {
   const [rows, setRows] = useState<RowConfig[]>([
     {
       tiles: [
-        { id: "A", algorithm: "binary-tree", connections: [] },
-        { id: "B", algorithm: "recursive-backtracker", connections: [] },
+        {
+          id: "A",
+          algorithm: getRandomGeneratorId(),
+          connections: [{ direction: "right", targetId: "B" }],
+        },
+        { id: "B", algorithm: getRandomGeneratorId(), connections: [] },
       ],
     },
   ]);
@@ -31,11 +36,18 @@ export function useMazeConfig(initialTilesPerRow = 2) {
     const newTiles: TileConfig[] = [];
 
     for (let i = 0; i < tilesPerRow; i++) {
-      const id = String.fromCharCode(65 + newRowIndex * tilesPerRow + i);
+      const nextIdIndex = 65 + newRowIndex * tilesPerRow + i;
+      const id = String.fromCharCode(nextIdIndex);
+      const lastTargetId = String.fromCharCode(nextIdIndex - 1);
       newTiles.push({
         id,
-        algorithm: "recursive-backtracker",
-        connections: [],
+        algorithm: getRandomGeneratorId(),
+        connections: [
+          {
+            direction: "left",
+            targetId: lastTargetId,
+          },
+        ],
       });
     }
 
@@ -68,11 +80,18 @@ export function useMazeConfig(initialTilesPerRow = 2) {
 
       if (count > currentTiles) {
         for (let i = currentTiles; i < count; i++) {
-          const id = String.fromCharCode(65 + rowIndex * count + i);
+          const nextIdIndex = 65 + rowIndex * count + i;
+          const id = String.fromCharCode(nextIdIndex);
+          const lastTargetId = String.fromCharCode(nextIdIndex - 1);
           tiles.push({
             id,
-            algorithm: "recursive-backtracker",
-            connections: [],
+            algorithm: getRandomGeneratorId(),
+            connections: [
+              {
+                direction: "left",
+                targetId: lastTargetId,
+              },
+            ],
           });
         }
       } else {

@@ -14,6 +14,7 @@ import { generateWilson } from "../algorithms/wilson";
 import { generateAldousBroder } from "../algorithms/aldousBroder";
 
 import type { AlgorithmType, MazeGrid } from "../types/maze";
+import { randomIntFromInterval } from "./helpers";
 
 // Mapeia algoritmo para função de geração
 const generators: Record<
@@ -32,6 +33,14 @@ const generators: Record<
   "recursive-division": generateRecursiveDivision,
   sidewinder: generateSidewinder,
 };
+
+export function getRandomGeneratorId() {
+  const generatorIds = Object.keys(generators);
+
+  const index = randomIntFromInterval(0, generatorIds.length - 1);
+
+  return generatorIds[index] as AlgorithmType;
+}
 
 export function createTile(
   id: string,
