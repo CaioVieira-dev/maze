@@ -4,7 +4,7 @@ interface ConnectionControlsProps {
   connections: TileConfig["connections"];
   canConnectRight: boolean;
   canConnectDown: boolean;
-  onToggle: (direction: "right" | "down") => void;
+  onToggle: (direction: "right" | "down") => void; //TODO: implementar mais direções
 }
 
 export function ConnectionControls({

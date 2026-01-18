@@ -1,11 +1,10 @@
 import { useState } from "react";
-
-export type Algorithm = "binary-tree" | "recursive-backtracker";
-export type Direction = "right" | "down" | "left" | "up";
+import type { AlgorithmType } from "../types/maze";
+import type { Direction } from "../types/game";
 
 export interface TileConfig {
   id: string;
-  algorithm: Algorithm;
+  algorithm: AlgorithmType;
   connections: {
     direction: Direction;
     targetId: string;
@@ -52,7 +51,7 @@ export function useMazeConfig(initialTilesPerRow = 2) {
   const onAlgorithmChange = (
     rowIndex: number,
     tileIndex: number,
-    algorithm: Algorithm
+    algorithm: AlgorithmType,
   ) => {
     const newRows = [...rows];
     newRows[rowIndex].tiles[tileIndex].algorithm = algorithm;
@@ -89,7 +88,7 @@ export function useMazeConfig(initialTilesPerRow = 2) {
   const onToggleConnection = (
     rowIndex: number,
     tileIndex: number,
-    direction: Direction
+    direction: Direction,
   ) => {
     const newRows = rows.map((row, rIdx) => {
       if (rIdx !== rowIndex) return row;
@@ -100,7 +99,7 @@ export function useMazeConfig(initialTilesPerRow = 2) {
           if (tIdx !== tileIndex) return tile;
 
           const existingIndex = tile.connections.findIndex(
-            (conn) => conn.direction === direction
+            (conn) => conn.direction === direction,
           );
 
           let newConnections: typeof tile.connections;
@@ -108,7 +107,7 @@ export function useMazeConfig(initialTilesPerRow = 2) {
           if (existingIndex >= 0) {
             // Remove conexão
             newConnections = tile.connections.filter(
-              (_, idx) => idx !== existingIndex
+              (_, idx) => idx !== existingIndex,
             );
           } else {
             // Adiciona conexão

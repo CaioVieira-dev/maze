@@ -1,8 +1,8 @@
-import type { Algorithm } from "../hooks/useMazeConfig";
+import type { AlgorithmType } from "../types/maze";
 
 interface AlgorithmSelectorProps {
-  value: Algorithm;
-  onChange: (algorithm: Algorithm) => void;
+  value: AlgorithmType;
+  onChange: (algorithm: AlgorithmType) => void;
 }
 
 export function AlgorithmSelector({ value, onChange }: AlgorithmSelectorProps) {
@@ -11,7 +11,7 @@ export function AlgorithmSelector({ value, onChange }: AlgorithmSelectorProps) {
       <label>Algoritmo:</label>
       <select
         value={value}
-        onChange={(e) => onChange(e.target.value as Algorithm)}
+        onChange={(e) => onChange(e.target.value as AlgorithmType)}
         className="bg-slate-700 p-2 rounded"
       >
         <option className="text-black" value="binary-tree">

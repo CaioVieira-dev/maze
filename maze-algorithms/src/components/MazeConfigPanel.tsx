@@ -1,4 +1,5 @@
-import type { Algorithm, RowConfig } from "../hooks/useMazeConfig";
+import type { RowConfig } from "../hooks/useMazeConfig";
+import type { AlgorithmType } from "../types/maze";
 import { MazeRowConfig } from "./MazeRowConfig";
 import { Button } from "./ui/Button";
 
@@ -11,12 +12,12 @@ interface MazeConfigPanelProps {
   onAlgorithmChange: (
     rowIndex: number,
     tileIndex: number,
-    algorithm: Algorithm
+    algorithm: AlgorithmType,
   ) => void;
   onToggleConnection: (
     rowIndex: number,
     tileIndex: number,
-    direction: "right" | "down"
+    direction: "right" | "down",
   ) => void;
 }
 

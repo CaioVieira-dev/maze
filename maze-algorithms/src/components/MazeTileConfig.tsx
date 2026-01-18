@@ -1,4 +1,5 @@
-import type { Algorithm, TileConfig } from "../hooks/useMazeConfig";
+import type { TileConfig } from "../hooks/useMazeConfig";
+import type { AlgorithmType } from "../types/maze";
 import { AlgorithmSelector } from "./AlgorithmSelector";
 import { ConnectionControls } from "./ConnectionControls";
 
@@ -7,7 +8,7 @@ interface MazeTileConfigProps {
   tileIndex: number;
   tilesPerRow: number;
   isLastRow: boolean;
-  onAlgorithmChange: (algorithm: Algorithm) => void;
+  onAlgorithmChange: (algorithm: AlgorithmType) => void;
   onToggleConnection: (direction: "right" | "down") => void;
 }
 
